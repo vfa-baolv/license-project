@@ -1,0 +1,13 @@
+version: '3'
+services:
+  node:
+    container_name: license_node
+    restart: always
+    build:
+      context: .
+      dockerfile: ./devops/node/Dockerfile
+    platform: linux/amd64
+    ports:
+      - "3009:3000"
+    volumes:
+      - ./license-plate:/var/www/app
