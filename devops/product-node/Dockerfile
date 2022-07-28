@@ -4,7 +4,7 @@ RUN apt-get update
 RUN apt-get install net-tools
 
 WORKDIR /var/www/app
-COPY ./service/product-node /var/www/app
+COPY ./services/product-service /var/www/app
 RUN npm install
 # expose ports
 EXPOSE 3000
