@@ -3,24 +3,6 @@ networks:
   my_network:
 
 services:
-  node:
-    container_name: license_node
-    restart: always
-    build:
-      context: .
-      dockerfile: ./devops/node/Dockerfile
-    platform: linux/amd64
-    ports:
-      - "3009:3000"
-    volumes:
-      - ./license-plate:/var/www/app
-    links:
-      - db
-    depends_on:
-      - db
-    networks:
-      - my_network
-
   db:
     container_name: license_mysql
     build:
@@ -41,21 +23,39 @@ services:
     networks:
       - my_network
 
-  product_node:
-    container_name: product_node
+  node:
+    container_name: license_node
     restart: always
     build:
       context: .
       dockerfile: ./devops/node/Dockerfile
     platform: linux/amd64
     ports:
+      - "3009:3000"
+    volumes:
+      - ./license-plate:/var/www/app
+    links:
+      - db
+    depends_on:
+      - db
+    networks:
+      - my_network
+
+  product_node:
+    container_name: product_node
+    restart: always
+    build:
+      context: .
+      dockerfile: ./devops/product-node/Dockerfile
+    platform: linux/amd64
+    ports:
       - "3010:3000"
     volumes:
       - ./services/product-service:/var/www/app
     networks:
-    - my_network
+      - my_network
     links:
-    - db
+      - db
 
   redis:
     image: 'redis:alpine'
