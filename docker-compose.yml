@@ -1,4 +1,7 @@
 version: '3'
+networks:
+  my_network:
+
 services:
   node:
     container_name: license_node
@@ -11,3 +14,54 @@ services:
       - "3009:3000"
     volumes:
       - ./license-plate:/var/www/app
+    links:
+      - db
+    depends_on:
+      - db
+    networks:
+      - my_network
+
+  db:
+    container_name: license_mysql
+    build:
+      context: .
+      dockerfile: ./devops/mysql/Dockerfile
+    restart: always
+    platform: linux/amd64
+    ports:
+      - "33306:3306"
+    # volumes:
+    #   - ./devops/mysql/mysql-data:/var/lib/mysql:delegated
+    environment:
+      TZ: Asia/ho_chi_minh
+      MYSQL_DATABASE: license
+      MYSQL_USER: john
+      MYSQL_ROOT_PASSWORD: abc123
+      MYSQL_PASSWORD: abc123
+    networks:
+      - my_network
+
+  product_node:
+    container_name: product_node
+    restart: always
+    build:
+      context: .
+      dockerfile: ./devops/node/Dockerfile
+    platform: linux/amd64
+    ports:
+      - "3010:3000"
+    volumes:
+      - ./services/product-service:/var/www/app
+    networks:
+    - my_network
+    links:
+    - db
+
+  redis:
+    image: 'redis:alpine'
+    ports:
+      - '63779:6379'
+    volumes:
+      - './devops/redis/data:/data'
+    networks:
+      - my_network

@@ -1,1 +1,4 @@
+/devops/mysql/mysql-data
+/devops/redis/data
 /license-plate
+/services/*
